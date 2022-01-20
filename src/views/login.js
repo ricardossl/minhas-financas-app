@@ -1,6 +1,7 @@
 import React from "react";
 import Card from "../components/card";
 import FormGroup from "../components/formgroup";
+import { withRouter } from "react-router-dom"
 
 class Login extends React.Component {
     state = {
@@ -13,41 +14,44 @@ class Login extends React.Component {
         console.log(this.state.senha);
     }
 
+    prepararCadastrar = () => {
+        this.props.history.push('/cadastro-usuarios');
+    }
+
     render() {
         return (
-            <div className="container">
-                <div className="row">
-                    <div className="col-md-6" style={{ position: 'relative', left: '300px' }}>
-                        <div className="bs-docs-section">
-                            <Card title='Meu cartão'>
-                                <div className="row">
-                                    <div className="col-lg-12">
-                                        <div className="bs-component">
-                                            <fieldset>
-                                                <FormGroup label="Email: " htmlFor="inputEmail">
-                                                    <input value={this.state.email} onChange={e => this.setState({ email: e.target.value })} type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Digite o Email"></input>
-                                                </FormGroup>
+            <div className="row">
+                <div className="col-md-6" style={{ position: 'relative', left: '300px' }}>
+                    <div className="bs-docs-section">
+                        <Card title='Meu cartão'>
+                            <div className="row">
+                                <div className="col-lg-12">
+                                    <div className="bs-component">
+                                        <fieldset>
+                                            <FormGroup label="Email: " htmlFor="inputEmail">
+                                                <input value={this.state.email} onChange={e => this.setState({ email: e.target.value })} type="email" className="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Digite o Email"></input>
+                                            </FormGroup>
 
-                                                <FormGroup label="Senha: " htmlFor="inputSenha">
-                                                    <input value={this.state.senha} onChange={e => this.setState({ senha: e.target.value })} type="password" className="form-control" id="inputSenha" placeholder="Digite a Senha"></input>
-                                                </FormGroup>
+                                            <FormGroup label="Senha: " htmlFor="inputSenha">
+                                                <input value={this.state.senha} onChange={e => this.setState({ senha: e.target.value })} type="password" className="form-control" id="inputSenha" placeholder="Digite a Senha"></input>
+                                            </FormGroup>
 
-                                                <button onClick={this.entrar} className="btn btn-success">Entrar</button>
-                                                <button className="btn btn-danger">Cadastrar</button>
-                                            </fieldset>
-                                        </div>
+                                            <button onClick={this.entrar} className="btn btn-success">Entrar</button>
+                                            <button onClick={this.prepararCadastrar} className="btn btn-danger">Cadastrar</button>
+                                        </fieldset>
                                     </div>
                                 </div>
-                            </Card>
-                        </div>
-
+                            </div>
+                        </Card>
                     </div>
 
                 </div>
 
             </div>
+
+
         )
     }
 }
 
-export default Login;
+export default withRouter(Login);
