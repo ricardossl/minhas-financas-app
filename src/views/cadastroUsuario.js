@@ -2,8 +2,15 @@ import React from "react";
 import Card from "../components/card";
 import FormGroup from "../components/formgroup";
 import { withRouter } from "react-router-dom"
+import UsuarioService from "../app/service/usuarioService";
+import { mensagemErro, mensagemSucesso } from "../components/toastr";
 
 class CadastroUsuario extends React.Component {
+    constructor() {
+        super()
+        this.usuarioService = new UsuarioService();
+    }
+
     state = {
         nome: '',
         email: '',
@@ -11,8 +18,48 @@ class CadastroUsuario extends React.Component {
         senhaRepeticao: ''
     }
 
+    validar() {
+        const mensagens = [];
+
+        if (!this.state.nome)
+            mensagens.push('O campo nome é obrigatório!')
+
+        if (!this.state.email)
+            mensagens.push('O email é obrigatório!')
+
+        if (!this.state.email)
+            mensagens.push('O campo email é obrigatório')
+        else if (!this.state.email.match(/^[a-z0-9.]+@[a-z0-9]+\.[a-z]/))
+            mensagens.push('Informe um email válido')
+
+        if (!this.state.senha || !this.state.senhaRepeticao)
+            mensagens.push('Digite a senha')
+        else if (this.state.senha !== this.state.senhaRepeticao)
+            mensagens.push('As senhas não coincidem.')
+
+        return mensagens;
+    }
+
     salvar = () => {
-        console.log(this.state);
+        const mensagens = this.validar();
+        if (mensagens && mensagens.length > 0) {
+            mensagens.forEach(msg => mensagemErro(msg))
+            return false
+        }
+
+
+        const usuario = {
+            nome: this.state.nome,
+            email: this.state.email,
+            senha: this.state.senha
+        }
+
+        this.usuarioService.salvar(usuario).then(response => {
+            mensagemSucesso('Usuário cadastrado com sucesso! Faça o login para acessar o sistema!')
+            this.props.history.push('/login')
+        }).catch(error => {
+            mensagemErro(error.response.data)
+        })
     }
 
     cancelar = () => {
