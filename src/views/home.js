@@ -1,5 +1,4 @@
 import React from "react";
-import axios from 'axios'
 import UsuarioService from "../app/service/usuarioService";
 import LocalStoreService from "../app/service/localStorageService";
 
