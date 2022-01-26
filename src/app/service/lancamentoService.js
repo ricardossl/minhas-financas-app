@@ -1,4 +1,5 @@
 import ApiService from "../apiservice";
+import ErroValidacao from "../exception/ErroValidacao";
 
 class LancamentoService extends ApiService {
     constructor() {
@@ -52,8 +53,47 @@ class LancamentoService extends ApiService {
         return this.get(params)
     }
 
-    deletar(id){
+    deletar(id) {
         return this.delete(`/${id}`)
+    }
+
+    salvar(lancamento) {
+        return this.post('', lancamento)
+    }
+
+    atualizar(lancamento) {
+        return this.put(`/${lancamento.id}`, lancamento)
+    }
+
+    obterPorId(id) {
+        return this.get(`/${id}`)
+    }
+
+    alterarStatus(id, status){
+
+         return this.put(`/${id}/atualiza-status`, status)
+    }
+
+    validar(lancamento) {
+        const errors = [];
+
+        if (!lancamento.descricao)
+            errors.push('O campo Descrição é obrigatório!')
+
+        if (!lancamento.ano)
+            errors.push('O Ano é obrigatório!')
+
+        if (!lancamento.mes)
+            errors.push('O Mês é obrigatório!')
+
+        if (!lancamento.tipo)
+            errors.push('O Tipo é obrigatório!')
+
+        if (!lancamento.valor)
+            errors.push('O Valor é obrigatório!')        
+
+        if (errors && errors.length > 0)
+            throw new ErroValidacao(errors)
     }
 }
 

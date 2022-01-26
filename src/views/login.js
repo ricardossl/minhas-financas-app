@@ -4,7 +4,7 @@ import FormGroup from "../components/formgroup";
 import { withRouter } from "react-router-dom"
 import UsuarioService from "../app/service/usuarioService";
 import { mensagemErro } from "../components/toastr";
-import LocalStoreService from "../app/service/localStorageService";
+import { AuthContext } from '../main/provedorAutenticacao'
 
 class Login extends React.Component {
     state = {
@@ -21,11 +21,12 @@ class Login extends React.Component {
         this.service.autenticar({
             email: this.state.email,
             senha: this.state.senha
-        }).then(response => {
-            LocalStoreService.adicionarItem('_usuario_logado', response.data)
+        }).then(response => { 
+            console.log(response)           
+            this.context.iniciarSessao(response.data)
             this.props.history.push('/home');
         }).catch(error => {
-            mensagemErro(error.response.data)
+            mensagemErro(error.response.data)            
         })
     }
 
@@ -38,7 +39,7 @@ class Login extends React.Component {
             <div className="row">
                 <div className="col-md-6" style={{ position: 'relative', left: '300px' }}>
                     <div className="bs-docs-section">
-                        <Card title='Meu cartão'>
+                        <Card title='Login'>
                             <div className="row">
                                 <div className="col-lg-12">
                                     <div className="bs-component">
@@ -51,8 +52,9 @@ class Login extends React.Component {
                                                 <input value={this.state.senha} onChange={e => this.setState({ senha: e.target.value })} type="password" className="form-control" id="inputSenha" placeholder="Digite a Senha"></input>
                                             </FormGroup>
 
-                                            <button onClick={this.entrar} className="btn btn-success">Entrar</button>
-                                            <button onClick={this.prepararCadastrar} className="btn btn-danger">Cadastrar</button>
+                                            <br></br>
+                                            <button onClick={this.entrar} className="btn btn-success"><i className="pi pi-sign-in"></i> Entrar</button>
+                                            <button onClick={this.prepararCadastrar} className="btn btn-danger"><i className="pi pi-plus"></i> Cadastrar</button>
                                         </fieldset>
                                     </div>
                                 </div>
@@ -68,5 +70,7 @@ class Login extends React.Component {
         )
     }
 }
+
+Login.contextType = AuthContext
 
 export default withRouter(Login);

@@ -14,17 +14,18 @@ import "primeicons/primeicons.css";                                //icons
 
 
 import 'toastr/build/toastr.min.js'
+import ProvedorAutenticacao from './provedorAutenticacao';
 
 class App extends React.Component {
 
   render() {
     return (
-      <>
+      <ProvedorAutenticacao>
         <Navbar />
         <div className="container">
           <Rotas />
         </div>
-      </>
+      </ProvedorAutenticacao>
     );
   }
 }

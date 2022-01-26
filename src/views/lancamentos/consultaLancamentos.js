@@ -44,6 +44,10 @@ class ConsultaLancamentos extends React.Component {
         }
 
         this.service.consultar(lancamentoFiltro).then(response => {
+            if (response.data.length < 1) {
+                messages.mensagemAlerta('Nenhum resultado encontrado')
+            }
+
             this.setState({ lancamentos: response.data })
         }).catch(error => {
             console.log(error)
@@ -52,7 +56,7 @@ class ConsultaLancamentos extends React.Component {
 
 
     prepararDeletar = (lancamento) => {
-        this.setState({ showConfirmDialog: true, lancamentoDeletar: lancamento })        
+        this.setState({ showConfirmDialog: true, lancamentoDeletar: lancamento })
     }
 
     cancelarDeletar = () => {
@@ -71,12 +75,33 @@ class ConsultaLancamentos extends React.Component {
 
             messages.mensagemSucesso('Lançamento deletado com sucesso!')
         }).catch(error => {
-            messages.mensagemErro('Erro ao deletar lançamento')
+            messages.mensagemErro(error.response.data)
         })
     }
 
+    prepararCadastrar = () => {
+        this.props.history.push('/cadastro-lancamentos')
+    }
+
     editar = (id) => {
-        console.log('Editando ', id)
+        this.props.history.push(`/cadastro-lancamentos/${id}`)
+    }
+
+    alterarStatus = (lancamento, status) => {
+        this.service.alterarStatus(lancamento.id, status).then(response => {
+            const lancamentos = this.state.lancamentos;
+            const index = lancamentos.indexOf(lancamento)
+
+            if (index !== -1) {
+                lancamento.status = status
+                lancamentos[index] = lancamento
+                this.setState({ lancamentos })
+            }
+
+            messages.mensagemSucesso('Status atualizado com sucesso!')
+        }).catch(error => {
+            messages.mensagemErro(error.response.data)
+        })
     }
 
     render() {
@@ -113,8 +138,8 @@ class ConsultaLancamentos extends React.Component {
                                 <SelectMenu lista={tipos} className="form-control" id="inputTipo" value={this.state.tipo} onChange={e => this.setState({ tipo: e.target.value })} />
                             </FormGroup>
 
-                            <button className="btn btn-success" type="button" onClick={this.buscar} >Buscar</button>
-                            <button className="btn btn-danger" type="button">Cadastrar</button>
+                            <button className="btn btn-success" type="button" onClick={this.buscar}><i className="pi pi-search"></i> Buscar</button>
+                            <button className="btn btn-danger" type="button" onClick={this.prepararCadastrar}><i className="pi pi-plus"></i> Cadastrar</button>
                         </div>
                     </div>
                 </div>
@@ -122,17 +147,14 @@ class ConsultaLancamentos extends React.Component {
                 <div className="row">
                     <div className="col-md-12">
                         <div className="bs-component">
-                            <LancamentosTable lancamentos={this.state.lancamentos} editAction={this.editar} deleteAction={this.prepararDeletar} />
+                            <LancamentosTable lancamentos={this.state.lancamentos} editAction={this.editar} deleteAction={this.prepararDeletar} alterarStatus={this.alterarStatus} />
                         </div>
                     </div>
                 </div>
 
                 <div>
                     <Dialog header="Header" visible={this.state.showConfirmDialog} style={{ width: '50vw' }} onHide={() => this.setState({ showConfirmDialog: false })} footer={footer} >
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                            cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                        <p>Deseja deletar o Lançamento?</p>
                     </Dialog>
 
                 </div>
